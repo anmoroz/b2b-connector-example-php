@@ -1,0 +1,13 @@
+doctrine:
+    dbal:
+        gateway:
+            driver:    pdo_mysql
+            host:      localhost
+            dbname:    b2b_gateway
+            user:      root
+            password:  root
+            charset:   UTF8
+            wrapper_class: 'Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Connection'
+            driver_class: 'Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Driver\PDOMySql\Driver'
+            options:
+                x_reconnect_attempts: 3
