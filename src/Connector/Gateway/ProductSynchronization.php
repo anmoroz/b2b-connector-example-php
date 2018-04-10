@@ -7,8 +7,17 @@
 namespace Connector\Gateway;
 
 use Doctrine\DBAL\Connection;
-use Connector\Gateway\Mappers\ {ProductMapper, FeatureMapper, GalleryMapper};
-use Connector\Gateway\Entity\ {Product, CatalogSection, Brand, ProductIdentifiers, ProductAdditionalField, Feature, Gallery};
+use Connector\Gateway\Mappers\ {ProductMapper, FeatureMapper, GalleryMapper, CertificateMapper};
+use Connector\Gateway\Entity\ {
+    Product,
+    CatalogSection,
+    Brand,
+    ProductIdentifiers,
+    ProductAdditionalField,
+    Feature,
+    Gallery,
+    Certificate
+};
 use Connector\Gateway\EntityDTO\ProductDTO;
 
 class ProductSynchronization
@@ -34,6 +43,11 @@ class ProductSynchronization
     private $galleryMapper;
 
     /**
+     * @var CertificateMapper
+     */
+    private $certificateMapper;
+
+    /**
      * @var string
      */
     private $error;
@@ -44,6 +58,7 @@ class ProductSynchronization
         $this->productMapper = new ProductMapper($gatewayConnection);
         $this->featureMapper = new FeatureMapper($gatewayConnection);
         $this->galleryMapper = new GalleryMapper($gatewayConnection);
+        $this->certificateMapper = new CertificateMapper($gatewayConnection);
     }
 
     /**
@@ -114,9 +129,11 @@ class ProductSynchronization
                 if ($productDTO->features) {
                     $this->updateFeatures($product, $productDTO->features);
                 }
-
                 if ($productDTO->gallery) {
                     $this->updateGallery($product, $productDTO->gallery);
+                }
+                if ($productDTO->certificates) {
+                    $this->updateCertificates($product, $productDTO->certificates);
                 }
             } else {
 
@@ -129,6 +146,23 @@ class ProductSynchronization
         }
 
         return true;
+    }
+
+    /**
+     * @param Product $product
+     * @param array $certificates
+     */
+    private function updateCertificates(Product $product, array $certificates)
+    {
+        $this->certificateMapper->deleteAllByProduct($product);
+
+        foreach ($certificates as $certificateItem) {
+            $certificate = new Certificate();
+            $certificate->setProduct($product);
+            $certificate->setAttributes($certificateItem);
+
+            $this->certificateMapper->save($certificate);
+        }
     }
 
     /**

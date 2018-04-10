@@ -13,5 +13,5 @@ define('APP_DIR', __DIR__);
 
 require_once(APP_DIR . '/../vendor/autoload.php');
 
-$kernel = new CommandKernel('B2B-RAEC connector Command Line Interface', 'v0.2.0');
+$kernel = new CommandKernel('B2B-RAEC connector Command Line Interface', 'v0.2.1');
 $kernel->handle();

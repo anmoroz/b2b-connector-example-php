@@ -30,6 +30,7 @@ class ProductDTO
     public $features = [];
     public $productIdentifiers = [];
     public $additionalFields = [];
+    public $certificates = [];
 
     /**
      * ProductDTO constructor.

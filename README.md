@@ -30,7 +30,7 @@
 ## Помощь
 
 ```
-B2B connector Command Line Interface v0.2.0
+B2B connector Command Line Interface v0.2.1
 
 Usage:
   command [options] [arguments]

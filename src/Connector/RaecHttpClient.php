@@ -37,6 +37,7 @@ class RaecHttpClient
         'image',
         'gallery',
         'deliveryTime',
+        'files',
     ];
 
     /**
@@ -349,6 +350,27 @@ class RaecHttpClient
                 if (isset($galleryItem['max'])) {
                     array_push($product['gallery'], $galleryItem['max']);
                 }
+            }
+        }
+
+        // Сертификаты
+        $product['certificates'] = [];
+        if (isset($data['files']) && !empty($data['files'])) {
+            foreach ($data['files'] as $fileItem) {
+                if (
+                    (int) $fileItem['type']['id'] !== self::CERTIFICATE_TYPE_ID
+                    || !isset($fileItem['certificateType'])
+                ) {
+                    continue;
+                }
+                array_push($product['certificates'], [
+                    'name' => $fileItem['certificateType'],
+                    'url' => $fileItem['url'],
+                    'validityFrom' => (isset($fileItem['certificateValidityFrom']) && $fileItem['certificateValidityFrom'] !== '0000-00-00')
+                        ? $fileItem['certificateValidityFrom'] : null,
+                    'validityTo' => (isset($fileItem['certificateValidityTo']) && $fileItem['certificateValidityTo'] !== '0000-00-00')
+                        ? $fileItem['certificateValidityTo'] : null,
+                ]);
             }
         }
 
