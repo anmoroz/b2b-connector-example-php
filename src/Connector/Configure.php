@@ -16,6 +16,9 @@ class Configure
 {
     const CONFIG_FILE = 'config.yml';
 
+    /**
+     * @var array
+     */
     private $configData;
 
     public function __construct()
@@ -35,6 +38,10 @@ class Configure
     }
 
     /**
-     * Other congig
+     * @return array
      */
+    public function getRaecClientPrams()
+    {
+        return $this->configData['raecClient'];
+    }
 }

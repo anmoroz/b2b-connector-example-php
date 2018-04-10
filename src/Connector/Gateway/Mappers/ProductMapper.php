@@ -86,9 +86,10 @@ class ProductMapper extends GatewayMapperAbstract
             $mayBeNull = ['manufacturer_code', 'alt_manufacturer_code', 'manufacturer', 'name_of_manufacturer',
                 'alt_name_of_manufacturer', 'unit_name', 'image_url', 'country_code_a3', 'stock_status'];
 
-            $sql = 'INSERT INTO '.$this->tableName.' (id, external_id, article, name, multiplicity, brand_id, '.implode(', ', $mayBeNull).')'
-                .' VALUES(:id, :external_id, :article, :name, :multiplicity, :brand_id, :'.implode(', :', $mayBeNull).')'
-                .' ON DUPLICATE KEY UPDATE article=:article, multiplicity=:multiplicity, name=:name, stock_status=:stock_status, brand_id=:brand_id, updated_at=NOW()';
+            $sql = 'INSERT INTO '.$this->tableName.' (id, external_id, article, name, multiplicity, brand_id, catalog_section_id, '.implode(', ', $mayBeNull).')'
+                .' VALUES(:id, :external_id, :article, :name, :multiplicity, :brand_id, :catalog_section_id, :'.implode(', :', $mayBeNull).')'
+                .' ON DUPLICATE KEY UPDATE article=:article, multiplicity=:multiplicity, name=:name, stock_status=:stock_status,'
+                .' brand_id=:brand_id, catalog_section_id=:catalog_section_id, updated_at=NOW()';
 
             foreach ($mayBeNull as $fieldName) {
                 $sql .= ', '.$fieldName.'=:'.$fieldName;
@@ -105,6 +106,9 @@ class ProductMapper extends GatewayMapperAbstract
             $brand = $product->getBrand();
             $stmt->bindValue('brand_id', $brand ? $brand->getId() : null);
 
+            $catalogSection = $product->getCatalogSection();
+            $stmt->bindValue('catalog_section_id', $catalogSection ? $catalogSection->getId() : null);
+
             foreach ($mayBeNull as $fieldName) {
                 $value = null;
                 $getter = 'get' . $this->id2camel($fieldName);
@@ -118,6 +122,7 @@ class ProductMapper extends GatewayMapperAbstract
 
         try {
             $saveResult = $this->saveSettings['productFields'] ? $stmt->execute() : true;
+
             if (!$product->getId()) {
                 $product->setId($this->connection->lastInsertId());
             } else if ($product->getExternalId()) {
@@ -147,7 +152,7 @@ class ProductMapper extends GatewayMapperAbstract
 
     /**
      * @param Product $product
-     * @return bool
+     * @return void
      * @throws \Doctrine\DBAL\DBALException
      */
     private function updateRelatedTables(Product $product)
@@ -157,31 +162,9 @@ class ProductMapper extends GatewayMapperAbstract
             return;
         }
 
-        if ($this->saveSettings['productFields']) {
-            // Delete all related section for product
-            $this->connection->delete(
-                'product_catalog_section_relation',
-                ['product_id' => $product->getId()]
-            );
-
-            /** @var \Connector\Gateway\Entity\CatalogSection $catalogSection */
-            foreach ($product->getCatalogSection() as $catalogSection) {
-
-                $sql = 'INSERT INTO product_catalog_section_relation (product_id, catalog_section_id)'
-                    .' VALUES (:product_id, :catalog_section_id)'
-                    .' ON DUPLICATE KEY UPDATE product_id=product_id'
-                ;
-
-                $stmt = $this->connection->prepare($sql);
-                $stmt->bindValue('product_id', $product->getId());
-                $stmt->bindValue('catalog_section_id', $catalogSection->getId());
-
-                $stmt->execute();
-            }
-        }
-
         if ($this->saveSettings['productIdentifiers'] && $identifiers = $product->getProductIdentifiers()) {
             $productIdentifiersMapper = new ProductIdentifiersMapper($this->connection);
+            //$productIdentifiersMapper->deleteAllByProduct($product);
 
             /** @var \Connector\Gateway\Entity\ProductIdentifiers $productIdentifier */
             foreach ($identifiers as $productIdentifier) {
@@ -192,6 +175,7 @@ class ProductMapper extends GatewayMapperAbstract
 
         if ($this->saveSettings['productAdditionalFields'] && $additionalFields = $product->getProductAdditionalFields()) {
             $productAdditionalFieldMapper = new ProductAdditionalFieldMapper($this->connection);
+            //$productAdditionalFieldMapper->deleteAllByProduct($product);
 
             /** @var \Connector\Gateway\Entity\ProductAdditionalField $productAdditionalField */
             foreach ($additionalFields as $productAdditionalField) {

@@ -26,13 +26,15 @@ class BrandMapper extends GatewayMapperAbstract
      */
     public function save(Brand &$brand)
     {
-        $sql = 'INSERT INTO '.$this->tableName.' (id, name)'
-            .' VALUES(:id, :name)'
-            .' ON DUPLICATE KEY UPDATE name=:name';
+        $sql = 'INSERT INTO '.$this->tableName.' (id, external_id, name, synonyms)'
+            .' VALUES(:id, :external_id, :name, :synonyms)'
+            .' ON DUPLICATE KEY UPDATE name = :name, synonyms = :synonyms';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue('id', $brand->getId());
+        $stmt->bindValue('external_id', $brand->getId());
         $stmt->bindValue('name', $brand->getName());
+        $stmt->bindValue('synonyms', $brand->getSynonyms());
 
         return $stmt->execute();
     }

@@ -8,7 +8,6 @@ namespace Connector\Gateway\Repository;
 
 use Connector\Gateway\Entity\Product as GatewayProduct;
 use Connector\Gateway\Entity\Brand as GatewayBrand;
-use Connector\Gateway\Entity\ProductIdentifiers as GatewayProductIdentifiers;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
@@ -26,7 +25,7 @@ class ProductRepository extends GatewayRepositoryAbstarct implements ObjectRepos
 
     /**
      * @param string $article
-     * @return GatewayProduct|boolean
+     * @return GatewayProduct|null
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findByArticle($article)
@@ -36,12 +35,27 @@ class ProductRepository extends GatewayRepositoryAbstarct implements ObjectRepos
             .' WHERE p.article = :article';
         $product = $this->connection->executeQuery($sql, [':article' => $article])->fetch();
 
-        return $product ? $this->createGatewayObject($product) : false;
+        return $product ? $this->createGatewayObject($product) : null;
+    }
+
+    /**
+     * @param string $externalId
+     * @return GatewayProduct|null
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findByExternalId($externalId)
+    {
+        $sql = 'SELECT p.*, b.name as brand_name FROM '.$this->tableName.' AS p'
+            .' LEFT JOIN brand AS b ON (p.brand_id = b.id)'
+            .' WHERE p.external_id = :external_id';
+        $product = $this->connection->executeQuery($sql, [':external_id' => $externalId])->fetch();
+
+        return $product ? $this->createGatewayObject($product) : null;
     }
 
     /**
      * @param int $id
-     * @return bool|GatewayProduct
+     * @return GatewayProduct|null
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findById($id)
@@ -51,7 +65,7 @@ class ProductRepository extends GatewayRepositoryAbstarct implements ObjectRepos
             .' WHERE p.id = '. (int) $id;
         $product = $this->connection->executeQuery($sql)->fetch();
 
-        return $product ? $this->createGatewayObject($product) : false;
+        return $product ? $this->createGatewayObject($product) : null;
     }
 
     /**

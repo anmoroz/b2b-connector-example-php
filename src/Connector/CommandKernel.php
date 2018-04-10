@@ -12,7 +12,6 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineMysqlDriver;
-use Connector\Driver\Dblib as DblibDriver;
 
 /**
  * Class CommandKernel
@@ -28,7 +27,7 @@ class CommandKernel extends SymfonyApplication
     protected $_commands = [
         \Connector\Commands\ProductCommand::class,
         \Connector\Commands\BrandCommand::class,
-        \Connector\Commands\OrderCommand::class,
+        \Connector\Commands\CatalogSectionCommand::class,
     ];
 
     /**
@@ -61,9 +60,14 @@ class CommandKernel extends SymfonyApplication
             new DoctrineMysqlDriver()
         );
 
+        // Http client
+        $raecHttpClient = new RaecHttpClient($configure->getRaecClientPrams());
+
+
         $helperSet = new HelperSet(
             [
-                'db' => new ConnectionHelper($gatewayConnection)
+                'db' => new ConnectionHelper($gatewayConnection),
+                'reacClient' => new HttpClientHelper($raecHttpClient),
             ]
         );
 

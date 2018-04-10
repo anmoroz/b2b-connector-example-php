@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2011 ООО «ТриДаВинчи»
- * @author Andrey Morozov
+ * Author: Andrey Morozov
  */
 
 namespace Connector\Commands;
@@ -10,56 +10,53 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Connector\Gateway\Mappers\BrandMapper;
+use Connector\Gateway\Mappers\CatalogSectionMapper;
 use Connector\RaecHttpClient;
-use Connector\Gateway\Entity\Brand;
+use Connector\Gateway\Entity\CatalogSection;
 
-/**
- * Class BrandCommand
- * @package Connector\Commands
- */
-class BrandCommand extends Command
+class CatalogSectionCommand extends Command
 {
     protected function configure()
     {
-        $this->setName("connector:brand")
-            ->setDescription('Обновление списка брендов')
+        $this->setName("connector:catalog-section")
+            ->setDescription('Обновление дерева разделов каталога')
             ->setHelp(<<<EOT
-Запись данных по брендам в шлюзовые таблицы B2B motion + синхронизация синонимов брендов с базой РАЭК
+Запись данных по товарам в шлюзовые таблицы B2B motion
 
 Применение:
 
-<info>php console.php connector:brand</info>
+<info>php console.php connector:catalog-section</info>
 EOT
             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->write('Brand synchronization started at '.date("Y.m.d H:i:s"), true);
+
+        $output->write('Catalog section synchronization started at '.date("Y.m.d H:i:s"), true);
 
         /** @var \Doctrine\DBAL\Connection $gatewayConnection */
         $gatewayConnection = $this->getHelper('db')->getConnection();
-        $brandMapper = new BrandMapper($gatewayConnection);
+        $catalogSectionMapper = new CatalogSectionMapper($gatewayConnection);
         /** @var RaecHttpClient $raecClient */
         $raecClient = $this->getHelper('reacClient')->getClient();
 
         $affectedRows = 0;
         $countRows = 0;
 
-        foreach ($raecClient->itrateBrands() as $brandData) {
+        foreach ($raecClient->itrateCategories() as $categoryData) {
             $countRows++;
 
-            $brand = new Brand();
-            $brand->setAttributes($brandData);
-            $result = $brandMapper->save($brand);
+            $catalogSection = new CatalogSection();
+            $catalogSection->setAttributes($categoryData);
+            $result = $catalogSectionMapper->save($catalogSection);
             if ($result) {
                 $affectedRows++;
             }
         }
 
         $output->write(sprintf(
-            'Brand synchronization has done at %s. Count - %d, affected - %d',
+            'Catalog section synchronization has done at %s. Count - %d, affected - %d',
             date("Y.m.d H:i:s"),
             $countRows,
             $affectedRows

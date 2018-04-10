@@ -26,12 +26,13 @@ class CatalogSectionMapper extends GatewayMapperAbstract
      */
     public function save(CatalogSection &$section)
     {
-        $sql = 'INSERT INTO '.$this->tableName.' (id, name, parent_id)'
-            .' VALUES(:id, :name, :parent_id)'
+        $sql = 'INSERT INTO '.$this->tableName.' (id, external_id, name, parent_id)'
+            .' VALUES(:id, :external_id, :name, :parent_id)'
             .' ON DUPLICATE KEY UPDATE name=:name, parent_id=:parent_id';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue('id', $section->getId());
+        $stmt->bindValue('external_id', $section->getId());
         $stmt->bindValue('name', $section->getName());
         $parentId = $section->getParentId();
         $stmt->bindValue('parent_id', $parentId ? $parentId : null);

@@ -37,4 +37,13 @@ class ProductIdentifiersMapper extends GatewayMapperAbstract
 
         $stmt->execute();
     }
+
+    /**
+     * @param Product $product
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     */
+    public function deleteAllByProduct(Product $product)
+    {
+        $this->connection->delete($this->tableName, ['product_id' => $product->getId()]);
+    }
 }

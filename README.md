@@ -1,6 +1,6 @@
 # Пример консольного приложения для работы с шлюзом B2B на PHP
 
-Конннектор соединяет с одной стороны ваши данные, это может быть любая доступная БД или REST API, с другой стороны шлюзовую базу данных B2B (MySQL).
+Конннектор соединяет с одной стороны данные из базы РАЭК, с другой стороны шлюзовую базу данных B2B (MySQL).
 Приложение реализует логику работы с шлюзом B2B.
 
 В примере содержится три команды. Но для ваших нужд можно добавить еще неограниченное число команд. Например синхронизация цен и остатков.
@@ -12,14 +12,14 @@
 
 ## Примеры команд
 
-Обновление товаров за последние 60 минут:
+Обновление товаров из базы РАЭК, измененных за прошедшие сутки:
 ```bash
-/path/to/app/console.php connector:product --lastchange-minutes=60
+/path/to/app/console.php connector:product --days-from=1
 ```
 
-Отправка новых заказов в БД компании:
+Синхронизация разделов каталога:
 ```bash
-/path/to/app/console.php connector:order
+/path/to/app/console.php connector:catalog-section
 ```
 
 Синхронизация брендов:
@@ -30,7 +30,7 @@
 ## Помощь
 
 ```
-B2B connector Command Line Interface v0.1.0
+B2B connector Command Line Interface v0.2.0
 
 Usage:
   command [options] [arguments]
@@ -49,6 +49,6 @@ Available commands:
   list               Lists commands
  connector
   connector:brand    Обновление списка брендов
-  connector:order    Отправка заказов в систему учета компании
+  connector:catalog-section    Синхронизация разделов каталога
   connector:product  Обновление товаров
 ```

@@ -87,7 +87,7 @@ class CatalogSection extends B2bGatewayEntity
     }
 
     /**
-     * Set parentId
+     * Set parent id
      *
      * @param integer $parentId
      * @return CatalogSection
@@ -100,7 +100,7 @@ class CatalogSection extends B2bGatewayEntity
     }
 
     /**
-     * Get parentId
+     * Get parent id
      *
      * @return integer 
      */

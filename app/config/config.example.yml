@@ -7,7 +7,6 @@ doctrine:
             user:      root
             password:  root
             charset:   UTF8
-            wrapper_class: 'Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Connection'
-            driver_class: 'Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Driver\PDOMySql\Driver'
-            options:
-                x_reconnect_attempts: 3
+raecClient:
+    baseUri: http://catalog.raec.su/api/
+    apiKey:  secret_key

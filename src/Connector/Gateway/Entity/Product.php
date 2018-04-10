@@ -98,7 +98,7 @@ class Product extends B2bGatewayEntity
     private $brand;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var \Connector\Gateway\Entity\CatalogSection
      */
     private $catalogSection;
 
@@ -117,8 +117,8 @@ class Product extends B2bGatewayEntity
      */
     public function __construct()
     {
-        $this->catalogSection = new \Doctrine\Common\Collections\ArrayCollection();
         $this->productIdentifiers = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->productAdditionalFields = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -433,8 +433,8 @@ class Product extends B2bGatewayEntity
      */
     public function setCountryCodeA3($countryCodeA3)
     {
-        if (preg_match('[A-Z]{3}', $countryCodeA3)) {
-            $this->countryCodeA3 = $this->countryCodes[mb_strtolower($countryCodeA3)];
+        if (preg_match('/^[A-Z]{3}$/', $countryCodeA3)) {
+            $this->countryCodeA3 = $countryCodeA3;
         }
 
         return $this;
@@ -520,32 +520,22 @@ class Product extends B2bGatewayEntity
     }
 
     /**
-     * Add catalog section
+     * Set catalog section
      *
-     * @param CatalogSection $catalogSection
+     * @param \Connector\Gateway\Entity\CatalogSection $catalogSection
      * @return Product
      */
-    public function addCatalogSection(CatalogSection $catalogSection)
+    public function setCatalogSection(CatalogSection $catalogSection)
     {
-        $this->catalogSection[] = $catalogSection;
+        $this->catalogSection = $catalogSection;
 
         return $this;
     }
 
     /**
-     * Remove catalog section
-     *
-     * @param CatalogSection $catalogSection
-     */
-    public function removeCatalogSection(CatalogSection $catalogSection)
-    {
-        $this->catalogSection->removeElement($catalogSection);
-    }
-
-    /**
      * Get catalog sections
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Connector\Gateway\Entity\CatalogSection
      */
     public function getCatalogSection()
     {
@@ -572,7 +562,7 @@ class Product extends B2bGatewayEntity
      */
     public function removeProductIdentifiers(ProductIdentifiers $productIdentifiers)
     {
-        $this->catalogSection->removeElement($productIdentifiers);
+        $this->productIdentifiers->removeElement($productIdentifiers);
     }
 
     /**

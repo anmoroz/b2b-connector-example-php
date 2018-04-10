@@ -1,7 +1,7 @@
 {
-    "name": "3DaVinci/b2b-connector-example-php",
-    "version": "0.1.0",
-    "description": "Example B2B connector",
+    "name": "3DaVinci/b2b-connector-demo",
+    "version": "0.2.0",
+    "description": "B2B connector for demo server",
     "type": "application",
     "license": "MIT",
     "authors": [
@@ -13,10 +13,11 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^7",
-        "symfony/console": "^3.0",
-        "symfony/yaml": "~3.0",
-        "doctrine/dbal": "v2.5.4",
-        "facile-it/doctrine-mysql-come-back": "^1.6"
+        "symfony/console": "^4.0",
+        "symfony/yaml": "^4.0",
+        "doctrine/dbal": "^2.7",
+        "guzzlehttp/guzzle": "^6.3",
+        "lavary/crunz": "^1.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0"
