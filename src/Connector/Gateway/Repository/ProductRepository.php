@@ -8,6 +8,7 @@ namespace Connector\Gateway\Repository;
 
 use Connector\Gateway\Entity\Product as GatewayProduct;
 use Connector\Gateway\Entity\Brand as GatewayBrand;
+use Connector\Gateway\Entity\CatalogSection as GatewayCatalogSection;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
@@ -173,6 +174,12 @@ class ProductRepository extends GatewayRepositoryAbstarct implements ObjectRepos
             'unitName' => $data['unit_name'],
             'setCountryCodeA3' => $data['country_code_a3'],
         ]);
+
+        if ($data['catalog_section_id']) {
+            $catalogSection = new GatewayCatalogSection();
+            $catalogSection->setId((int) $data['catalog_section_id']);
+            $product->setCatalogSection($catalogSection);
+        }
 
         if (isset($data['brand_id']) && $data['brand_id'] && isset($data['brand_name'])) {
             $brand = new GatewayBrand();
