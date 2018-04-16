@@ -201,7 +201,7 @@ class RaecHttpClient
                     $content = $response->getBody()->getContents();
                     if (($arrayProducts = $this->decode($content)) !== false) {
                         foreach ($arrayProducts as $product) {
-                            if (!$product['descriptionRu']) {
+                            if (!$product['descriptionRu'] && !$product['descriptionShort']) {
                                 continue;
                             }
                             $productData = $this->normalizeProduct($product);
@@ -266,7 +266,7 @@ class RaecHttpClient
         $product = [
             'article' => $data['raecId'],
             'externalId' => $data['raecId'],
-            'name' => $data['descriptionRu'],
+            'name' => $data['descriptionRu'] ? $data['descriptionRu'] : $data['descriptionShort'],
             'manufacturerCode' => $data['supplierId'],
             'altManufacturerCode' => $data['supplierAltId'],
             'multyplicity' => (int) $data['multyplicity'] > 0 ? (int) $data['multyplicity'] : 1,
@@ -325,7 +325,7 @@ class RaecHttpClient
                 $additionalFields['etim']['features_search'] = $featuresData['features_search'];
             }
         }
-        if (trim($data['descriptionAuto'])) {
+        if ($data['descriptionRu'] && trim($data['descriptionAuto'])) {
             $additionalFields['name_auto'] = trim($data['descriptionAuto']);
         }
         if ((int) $data['deliveryTime'] > 0) {
