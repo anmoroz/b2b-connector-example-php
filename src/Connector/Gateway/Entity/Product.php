@@ -198,7 +198,11 @@ class Product extends B2bGatewayEntity
      */
     public function setManufacturerCode($manufacturerCode)
     {
-        if ($manufacturerCode !== 'нет данных') {
+        if (
+            $manufacturerCode !== 'нет данных'
+            && mb_strlen($manufacturerCode) > 1
+            && mb_strlen($manufacturerCode) < 120
+        ) {
             $this->manufacturerCode = $manufacturerCode;
         }
 

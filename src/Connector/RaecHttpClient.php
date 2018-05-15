@@ -299,7 +299,11 @@ class RaecHttpClient
         // Дополнительные поля
         $additionalFields = [];
         if (!empty($data['seriesMarketing']) && $data['seriesMarketing']['name'] != '-') {
-            $additionalFields['series'] = trim($data['seriesMarketing']['name']);
+            $seriesMarketing = $data['seriesMarketing'];
+            $additionalFields['series'] = trim($seriesMarketing['name']);
+            if (isset($seriesMarketing['synonyms']) && $seriesMarketing['synonyms']) {
+                $additionalFields['series_synonym'] = trim($seriesMarketing['synonyms']);
+            }
         }
         if (!empty($data['etimclass'])) {
             $classData = $this->etimClasses[ $data['etimclass']['id'] ] ?? null;
